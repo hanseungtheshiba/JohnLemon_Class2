@@ -1,25 +1,33 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GameEnding : MonoBehaviour
 {
-    [Header("ÆäÀÌµå ½Ã°£")]
+    [Header("í˜ì´ë“œ ì‹œê°„")]
     [SerializeField]
     private float fadeDuration = 1f;
-    [Header("ÀÌ¹ÌÁö°¡ Ãâ·ÂµÇ´Â ½Ã°£")]
+    [Header("ì´ë¯¸ì§€ê°€ ì¶œë ¥ë˜ëŠ” ì‹œê°„")]
     private float displayImageDuration = 1f;
-    [Header("ÇÃ·¹ÀÌ¾î °ÔÀÓ¿ÀºêÁ§Æ®")]
+    [Header("í”Œë ˆì´ì–´ ê²Œì„ì˜¤ë¸Œì íŠ¸")]
     [SerializeField]
     private GameObject player;
-    [Header("¼º°ø Äµ¹ö½º ±×·ì")]
+    [Header("ì„±ê³µ ìº”ë²„ìŠ¤ ê·¸ë£¹")]
     [SerializeField]
     private CanvasGroup exitBackgroundImageGroup = null;
-    [Header("½ÇÆĞ Äµ¹ö½º ±×·ì")]
+    [Header("ì‹¤íŒ¨ ìº”ë²„ìŠ¤ ê·¸ë£¹")]
     [SerializeField]
     private CanvasGroup caughtBackgroundImageGroup = null;
+    [Header("ì„±ê³µ ì‚¬ìš´ë“œ")]
+    [SerializeField]
+    private AudioSource exitAudio;
+    [Header("ì‹¤íŒ¨ ì‚¬ìš´ë“œ")]
+    [SerializeField]
+    private AudioSource caughtAudio;
 
     private bool isPlayerExit = false;
     private bool isPlayerCaught = false;
+
+    private bool hasAudioPlayed = false;
 
     private float timer = 0f;
 
@@ -27,16 +35,23 @@ public class GameEnding : MonoBehaviour
     {
         if (isPlayerExit == true)
         {
-            EndLevel(exitBackgroundImageGroup, false);
+            EndLevel(exitBackgroundImageGroup, false, exitAudio);
         }
         else if(isPlayerCaught == true)
         {
-            EndLevel(caughtBackgroundImageGroup);
+            EndLevel(caughtBackgroundImageGroup, true, caughtAudio);
         }
     }
 
-    private void EndLevel(CanvasGroup imageGroup, bool doRestart=true)
+    private void EndLevel(CanvasGroup imageGroup, bool doRestart, 
+        AudioSource audioSource)
     {
+        if (!hasAudioPlayed)
+        {
+            audioSource.Play();
+            hasAudioPlayed = true;
+        }
+
         timer += Time.deltaTime;
         // timer = timer + Time.deltaTime;
 
@@ -57,7 +72,7 @@ public class GameEnding : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        // .Equals : ==°ú °°À¸³ª ¼º´ÉÀÌ ´õ ÁÁÀ½
+        // .Equals : ==ê³¼ ê°™ìœ¼ë‚˜ ì„±ëŠ¥ì´ ë” ì¢‹ìŒ
         if (other.gameObject.Equals(player))
         {
             isPlayerExit = true;
